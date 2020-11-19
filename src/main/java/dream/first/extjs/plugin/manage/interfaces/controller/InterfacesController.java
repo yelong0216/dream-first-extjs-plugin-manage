@@ -2,6 +2,7 @@ package dream.first.extjs.plugin.manage.interfaces.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,12 +23,14 @@ import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondition;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import org.yelong.http.client.DefaultHttpClient;
 import org.yelong.http.client.HttpClient;
 import org.yelong.http.exception.HttpException;
 import org.yelong.http.request.HttpRequest;
 import org.yelong.http.request.HttpRequestFactory;
 import org.yelong.http.response.HttpResponse;
+import org.yelong.support.servlet.resource.response.ResourceResponseException;
+import org.yelong.support.spring.mvc.HandlerResponseWay;
+import org.yelong.support.spring.mvc.ResponseWay;
 import org.yelong.support.spring.mvc.method.search.RequestMappingHandlerMethodSearcher;
 import org.yelong.support.spring.mvc.method.search.SearchCondition;
 import org.yelong.support.spring.mvc.method.search.SearchMode;
@@ -35,10 +38,11 @@ import org.yelong.support.spring.mvc.method.search.SearchName;
 
 import com.github.pagehelper.PageInfo;
 
-import dream.first.core.queryinfo.filter.QueryFilterInfo;
-import dream.first.core.queryinfo.sort.QuerySortInfo;
-import dream.first.extjs.controller.BaseExtJSCrudController;
-import dream.first.extjs.login.LoginValidate;
+import dream.first.base.queryinfo.filter.DFQueryFilterInfo;
+import dream.first.base.queryinfo.sort.DFQuerySortInfo;
+import dream.first.extjs.base.controller.DFBaseExtJSCrudController;
+import dream.first.extjs.base.login.DFLoginValidate;
+import dream.first.extjs.plugin.manage.ExtJSPluginManage;
 import dream.first.extjs.plugin.manage.interfaces.dto.InterfaceTestInfo;
 
 /**
@@ -47,16 +51,12 @@ import dream.first.extjs.plugin.manage.interfaces.dto.InterfaceTestInfo;
  * @since 2.0
  */
 @Controller
-@LoginValidate(validate = false)
-@RequestMapping("plugin/manage/interfaces")
-public class InterfacesController extends BaseExtJSCrudController<HashMap<String, Object>> {
+@DFLoginValidate(validate = false)
+@RequestMapping({ "interfaces", "extjs/plugin/manage/interfaces" })
+public class InterfacesController extends DFBaseExtJSCrudController<HashMap<String, Object>> {
 
-	private HttpClient httpClient = new DefaultHttpClient();
-
-	@RequestMapping("index")
-	public String index() {
-		return "plugin/manage/interfaces/springMVCInterfaces.jsp";
-	}
+	@Resource
+	private HttpClient httpClient;
 
 	@Resource
 	private RequestMappingHandlerMapping requestMappingHandlerMapping;
@@ -64,9 +64,17 @@ public class InterfacesController extends BaseExtJSCrudController<HashMap<String
 	@Resource
 	private RequestMappingHandlerMethodSearcher requestMappingHandlerMethodSearcher;
 
+	@ResponseBody
+	@RequestMapping("index")
+	@ResponseWay(HandlerResponseWay.MODEL_AND_VIEW)
+	public void index() throws ResourceResponseException, IOException {
+		responseHtml(ExtJSPluginManage.RESOURCE_PRIVATES_PACKAGE,
+				ExtJSPluginManage.RESOURCE_PREFIX + "/html/interfaces/springMVCInterfaces.html");
+	}
+
 	@Override
-	protected PageInfo<?> queryModel(HashMap<String, Object> model, List<QueryFilterInfo> queryFilterInfos,
-			List<QuerySortInfo> querySortInfos, Integer pageNum, Integer pageSize) throws Exception {
+	public PageInfo<?> queryModel(HashMap<String, Object> model, Collection<DFQueryFilterInfo> queryFilterInfos,
+			Collection<DFQuerySortInfo> querySortInfos, Integer pageNum, Integer pageSize) throws Exception {
 		String patternsConditionStr = getRequest().getParameter("model.patternsCondition");
 		String methodsConditionStr = getRequest().getParameter("model.methodsCondition");
 		String name = getRequest().getParameter("model.name");
@@ -111,31 +119,6 @@ public class InterfacesController extends BaseExtJSCrudController<HashMap<String
 			mapList.add(map);
 		}
 		return new PageInfo<>(mapList);
-	}
-
-	@Override
-	protected boolean isNew(HashMap<String, Object> model) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected void saveModel(HashMap<String, Object> model) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected void modifyModel(HashMap<String, Object> model) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected boolean deleteModel(String deleteIds) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected HashMap<String, Object> retrieveModel(HashMap<String, Object> model) throws Exception {
-		throw new UnsupportedOperationException();
 	}
 
 	@ResponseBody

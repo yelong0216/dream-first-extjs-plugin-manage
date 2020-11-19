@@ -1,5 +1,6 @@
 package dream.first.extjs.plugin.manage.model.controller;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -16,9 +17,9 @@ import org.yelong.core.model.manage.ModelManager;
 
 import com.github.pagehelper.PageInfo;
 
-import dream.first.core.queryinfo.filter.QueryFilterInfo;
-import dream.first.core.queryinfo.sort.QuerySortInfo;
-import dream.first.extjs.controller.BaseExtJSCrudController;
+import dream.first.base.queryinfo.filter.DFQueryFilterInfo;
+import dream.first.base.queryinfo.sort.DFQuerySortInfo;
+import dream.first.extjs.base.controller.DFBaseExtJSCrudController;
 import dream.first.extjs.plugin.manage.model.dto.FieldAndColumnDTO;
 import dream.first.extjs.plugin.manage.model.dto.ModelAndTableDTOBuilder;
 
@@ -28,33 +29,13 @@ import dream.first.extjs.plugin.manage.model.dto.ModelAndTableDTOBuilder;
  * @since 2.0
  */
 @Controller
-@RequestMapping("plugin/manage/model/field")
-public class FieldAndColumnManageController extends BaseExtJSCrudController<FieldAndColumnDTO> {
-
-	@Override
-	protected void saveModel(FieldAndColumnDTO model) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected void modifyModel(FieldAndColumnDTO model) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected boolean isNew(FieldAndColumnDTO model) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected boolean deleteModel(String deleteIds) throws Exception {
-		throw new UnsupportedOperationException();
-	}
+@RequestMapping({ "model/field", "extjs/plugin/manage/model/field" })
+public class FieldAndColumnManageController extends DFBaseExtJSCrudController<FieldAndColumnDTO> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected PageInfo<?> queryModel(FieldAndColumnDTO model, List<QueryFilterInfo> queryFilterInfos,
-			List<QuerySortInfo> querySortInfos, Integer pageNum, Integer pageSize) throws Exception {
+	public PageInfo<?> queryModel(FieldAndColumnDTO model, Collection<DFQueryFilterInfo> queryFilterInfos,
+			Collection<DFQuerySortInfo> querySortInfos, Integer pageNum, Integer pageSize) throws Exception {
 		String modelClassName = getParameter("modelClassName");
 		Strings.requireNonBlank("必填参数缺失：modelClassName");
 		ModelManager modelManager = modelService.getModelConfiguration().getModelManager();
@@ -72,11 +53,6 @@ public class FieldAndColumnManageController extends BaseExtJSCrudController<Fiel
 		fieldAndColumnDTOs = fieldAndColumnStream.map(ModelAndTableDTOBuilder::buildFieldAndColumnDTO)
 				.collect(Collectors.toList());
 		return new PageInfo<>(fieldAndColumnDTOs);
-	}
-
-	@Override
-	protected FieldAndColumnDTO retrieveModel(FieldAndColumnDTO model) throws Exception {
-		throw new UnsupportedOperationException();
 	}
 
 }

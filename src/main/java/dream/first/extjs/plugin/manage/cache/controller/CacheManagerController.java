@@ -1,6 +1,8 @@
 package dream.first.extjs.plugin.manage.cache.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -15,15 +17,19 @@ import org.yelong.commons.lang.Strings;
 import org.yelong.core.cache.CacheEntity;
 import org.yelong.core.cache.CacheManager;
 import org.yelong.core.cache.CacheManagerFactory;
+import org.yelong.support.servlet.resource.response.ResourceResponseException;
+import org.yelong.support.spring.mvc.HandlerResponseWay;
+import org.yelong.support.spring.mvc.ResponseWay;
 
 import com.github.pagehelper.PageInfo;
 
-import dream.first.core.queryinfo.filter.QueryFilterInfo;
-import dream.first.core.queryinfo.sort.QuerySortInfo;
-import dream.first.extjs.controller.BaseExtJSCrudController;
-import dream.first.extjs.login.LoginValidate;
+import dream.first.base.queryinfo.filter.DFQueryFilterInfo;
+import dream.first.base.queryinfo.sort.DFQuerySortInfo;
+import dream.first.extjs.base.controller.DFBaseExtJSCrudController;
+import dream.first.extjs.base.login.DFLoginValidate;
+import dream.first.extjs.base.msg.DFETreeStoreData;
+import dream.first.extjs.plugin.manage.ExtJSPluginManage;
 import dream.first.extjs.plugin.manage.cache.dto.CacheMap;
-import dream.first.extjs.support.store.TreeStoreData;
 
 /**
  * 缓存管理器控制器
@@ -31,35 +37,23 @@ import dream.first.extjs.support.store.TreeStoreData;
  * @since 2.0
  */
 @Controller
-@LoginValidate(validate = false)
-@RequestMapping("plugin/manage/cache")
-public class CacheManagerController extends BaseExtJSCrudController<CacheMap> {
+@DFLoginValidate(validate = false)
+@RequestMapping({ "cache", "extjs/plugin/manage/cache" })
+public class CacheManagerController extends DFBaseExtJSCrudController<CacheMap> {
 
 	@Resource
 	private List<CacheManagerFactory> cacheManagerFactorys;
 
+	@ResponseBody
 	@RequestMapping("index")
-	public String index() {
-		return "plugin/manage/cache/cacheManage.jsp";
+	@ResponseWay(HandlerResponseWay.MODEL_AND_VIEW)
+	public void index() throws ResourceResponseException, IOException {
+		responseHtml(ExtJSPluginManage.RESOURCE_PRIVATES_PACKAGE,
+				ExtJSPluginManage.RESOURCE_PREFIX + "/html/cache/cacheManage.html");
 	}
 
 	@Override
-	protected boolean isNew(CacheMap model) {
-		return false;
-	}
-
-	@Override
-	protected void saveModel(CacheMap model) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected void modifyModel(CacheMap model) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected boolean deleteModel(String deleteIds) throws Exception {
+	public boolean deleteModel(String deleteIds) throws Exception {
 		CacheManager cacheManager = getCacheManager();
 		Strings.requireNonBlank(deleteIds);
 		String[] deleteIdArray = deleteIds.split(",");
@@ -67,11 +61,6 @@ public class CacheManagerController extends BaseExtJSCrudController<CacheMap> {
 			cacheManager.removeQuietly(deleteIdArray[i]);
 		}
 		return true;
-	}
-
-	@Override
-	protected CacheMap retrieveModel(CacheMap model) throws Exception {
-		throw new UnsupportedOperationException();
 	}
 
 	@ResponseBody
@@ -114,10 +103,10 @@ public class CacheManagerController extends BaseExtJSCrudController<CacheMap> {
 	@ResponseBody
 	@RequestMapping("getCacheManagerFactoryTree")
 	public String getCacheManagerFactoryTree() {
-		List<TreeStoreData<CacheManagerFactory>> treeStoreDatas = new ArrayList<TreeStoreData<CacheManagerFactory>>(
+		List<DFETreeStoreData<CacheManagerFactory>> treeStoreDatas = new ArrayList<DFETreeStoreData<CacheManagerFactory>>(
 				cacheManagerFactorys.size());
 		for (CacheManagerFactory cacheManagerFactory : cacheManagerFactorys) {
-			TreeStoreData<CacheManagerFactory> treeStoreData = new TreeStoreData<CacheManagerFactory>(
+			DFETreeStoreData<CacheManagerFactory> treeStoreData = new DFETreeStoreData<CacheManagerFactory>(
 					cacheManagerFactory);
 			treeStoreData.setId(cacheManagerFactory.toString());
 			treeStoreData.setText(cacheManagerFactory.getName());
@@ -128,7 +117,7 @@ public class CacheManagerController extends BaseExtJSCrudController<CacheMap> {
 	}
 
 	/**
-	 * @return 换粗管理器树
+	 * @return 缓存管理器树
 	 */
 	@ResponseBody
 	@RequestMapping("getCacheManagerTree")
@@ -139,10 +128,10 @@ public class CacheManagerController extends BaseExtJSCrudController<CacheMap> {
 				.filter(x -> cacheManagerFactoryStr.equals(x.toString())).findFirst().orElse(null);
 		Objects.requireNonNull(cacheManagerFactory);
 		List<CacheManager> cacheManagers = cacheManagerFactory.getHasCreate();
-		List<TreeStoreData<CacheManager>> treeStoreDatas = new ArrayList<TreeStoreData<CacheManager>>(
+		List<DFETreeStoreData<CacheManager>> treeStoreDatas = new ArrayList<DFETreeStoreData<CacheManager>>(
 				cacheManagers.size());
 		for (CacheManager cacheManager : cacheManagers) {
-			TreeStoreData<CacheManager> treeStoreData = new TreeStoreData<CacheManager>(cacheManager);
+			DFETreeStoreData<CacheManager> treeStoreData = new DFETreeStoreData<CacheManager>(cacheManager);
 			treeStoreData.setId(cacheManager.toString() + "【" + cacheManager.getName() + "】");
 //			treeStoreData.setText("【" + cacheManager.getName() + "】");
 			treeStoreData.setText(cacheManager.getName());
@@ -153,8 +142,8 @@ public class CacheManagerController extends BaseExtJSCrudController<CacheMap> {
 	}
 
 	@Override
-	protected PageInfo<?> queryModel(CacheMap model, List<QueryFilterInfo> queryFilterInfos,
-			List<QuerySortInfo> querySortInfos, Integer pageNum, Integer pageSize) throws Exception {
+	public PageInfo<?> queryModel(CacheMap model, Collection<DFQueryFilterInfo> queryFilterInfos,
+			Collection<DFQuerySortInfo> querySortInfos, Integer pageNum, Integer pageSize) throws Exception {
 		CacheManager cacheManager = null;
 		try {
 			cacheManager = getCacheManager();

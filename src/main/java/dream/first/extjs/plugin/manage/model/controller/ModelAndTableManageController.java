@@ -3,6 +3,8 @@
  */
 package dream.first.extjs.plugin.manage.model.controller;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,15 +13,20 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.yelong.core.model.Modelable;
 import org.yelong.core.model.manage.ModelAndTable;
 import org.yelong.core.model.manage.ModelManager;
+import org.yelong.support.servlet.resource.response.ResourceResponseException;
+import org.yelong.support.spring.mvc.HandlerResponseWay;
+import org.yelong.support.spring.mvc.ResponseWay;
 
 import com.github.pagehelper.PageInfo;
 
-import dream.first.core.queryinfo.filter.QueryFilterInfo;
-import dream.first.core.queryinfo.sort.QuerySortInfo;
-import dream.first.extjs.controller.BaseExtJSCrudController;
+import dream.first.base.queryinfo.filter.DFQueryFilterInfo;
+import dream.first.base.queryinfo.sort.DFQuerySortInfo;
+import dream.first.extjs.base.controller.DFBaseExtJSCrudController;
+import dream.first.extjs.plugin.manage.ExtJSPluginManage;
 import dream.first.extjs.plugin.manage.model.dto.ModelAndTableDTO;
 import dream.first.extjs.plugin.manage.model.dto.ModelAndTableDTOBuilder;
 
@@ -28,32 +35,20 @@ import dream.first.extjs.plugin.manage.model.dto.ModelAndTableDTOBuilder;
  * @since
  */
 @Controller
-@RequestMapping("plugin/manage/model")
-public class ModelAndTableManageController extends BaseExtJSCrudController<ModelAndTableDTO> {
+@RequestMapping({ "model", "extjs/plugin/manage/model" })
+public class ModelAndTableManageController extends DFBaseExtJSCrudController<ModelAndTableDTO> {
 
+	@ResponseBody
 	@RequestMapping("index")
-	public String index() {
-		return "plugin/manage/model/modelAndTableDTOManage.jsp";
-	}
-
-	@Override
-	protected void saveModel(ModelAndTableDTO model) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected void modifyModel(ModelAndTableDTO model) throws Exception {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	protected boolean isNew(ModelAndTableDTO model) {
-		throw new UnsupportedOperationException();
+	@ResponseWay(HandlerResponseWay.MODEL_AND_VIEW)
+	public void index() throws ResourceResponseException, IOException {
+		responseHtml(ExtJSPluginManage.RESOURCE_PRIVATES_PACKAGE,
+				ExtJSPluginManage.RESOURCE_PREFIX + "/html/model/modelAndTableManage.html");
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected boolean deleteModel(String deleteIds) throws Exception {
+	public boolean deleteModel(String deleteIds) throws Exception {
 		String[] modelClassNames = deleteIds.split(",");
 		ModelManager modelManager = modelService.getModelConfiguration().getModelManager();
 		for (String modelClassName : modelClassNames) {
@@ -64,8 +59,8 @@ public class ModelAndTableManageController extends BaseExtJSCrudController<Model
 	}
 
 	@Override
-	protected PageInfo<?> queryModel(ModelAndTableDTO model, List<QueryFilterInfo> queryFilterInfos,
-			List<QuerySortInfo> querySortInfos, Integer pageNum, Integer pageSize) throws Exception {
+	public PageInfo<?> queryModel(ModelAndTableDTO model, Collection<DFQueryFilterInfo> queryFilterInfos,
+			Collection<DFQuerySortInfo> querySortInfos, Integer pageNum, Integer pageSize) throws Exception {
 		String modelClassSimpleName = getParameter("model.modelClassSimpleName");
 
 		ModelManager modelManager = modelService.getModelConfiguration().getModelManager();
@@ -81,11 +76,6 @@ public class ModelAndTableManageController extends BaseExtJSCrudController<Model
 					.collect(Collectors.toList());
 		}
 		return new PageInfo<>(modelAndTableDTOs);
-	}
-
-	@Override
-	protected ModelAndTableDTO retrieveModel(ModelAndTableDTO model) throws Exception {
-		throw new UnsupportedOperationException();
 	}
 
 }

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.yelong0216.dream.first</groupId>
 	<artifactId>dream-first-extjs-plugin-manage</artifactId>
-	<version>2.0.0</version>
+	<version>2.1.0</version>
 	<name>dream-first-extjs-plugin-manage</name>
 	<description>dreamfirst-extjs管理插件</description>
 	<url>https://github.com/yelong0216/dream-first-extjs-plugin-manage.git</url>
@@ -24,14 +24,14 @@
 		<url>https://github.com/yelong0216/dream-first-extjs-plugin-manage</url>
 	</scm>
 	<properties>
-		<dream-first.version>[2.0.0,2.1.0)</dream-first.version>
+		<dream-first.version>[2.1.0,2.2.0)</dream-first.version>
 		<dream-first-extjs.version>${dream-first.version}</dream-first-extjs.version>
-		<yelong-http.version>1.1.0</yelong-http.version>
+		<yelong-http.version>[1.1.0,1.2.0)</yelong-http.version>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.github.yelong0216.dream.first</groupId>
-			<artifactId>dream-first-extjs</artifactId>
+			<artifactId>dream-first-extjs-base</artifactId>
 			<version>${dream-first-extjs.version}</version>
 		</dependency>
 		<dependency>
@@ -49,24 +49,14 @@
 					<resource>
 						<directory>src/main/java</directory>
 						<includes>
-							<include>**/*.properties</include>
-							<include>**/*.xml</include>
-							<include>**/*.tld</include>
-							<include>**/*.yml</include>
-							<include>**/*.ftl</include>
-							<include>**/*.factories</include>
+							<include>**/*.*</include>
 						</includes>
 						<filtering>false</filtering>
 					</resource>
 					<resource>
 						<directory>src/main/resources</directory>
 						<includes>
-							<include>**/*.properties</include>
-							<include>**/*.xml</include>
-							<include>**/*.tld</include>
-							<include>**/*.yml</include>
-							<include>**/*.ftl</include>
-							<include>**/*.factories</include>
+							<include>**/*.*</include>
 						</includes>
 						<filtering>false</filtering>
 					</resource>

@@ -13,9 +13,15 @@ import dream.first.extjs.plugin.manage.cache.controller.ClearAllCacheController;
 import dream.first.extjs.plugin.manage.interfaces.controller.InterfacesController;
 import dream.first.extjs.plugin.manage.model.controller.FieldAndColumnManageController;
 import dream.first.extjs.plugin.manage.model.controller.ModelAndTableManageController;
+import dream.first.extjs.plugin.manage.servlet.ManageResourceServletRegistrationBean;
 
 public class ExtJSPluginManageConfiguration {
 
+	@Bean
+	public ManageResourceServletRegistrationBean manageResourceServletRegistrationBean() {
+		return new ManageResourceServletRegistrationBean();
+	}
+	
 	@Bean
 	public ClearAllCacheController clearAllCacheController() {
 		return new ClearAllCacheController();

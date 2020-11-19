@@ -14,9 +14,9 @@ import org.yelong.core.cache.CacheManager;
 import org.yelong.core.cache.CacheManagerFactory;
 import org.yelong.core.model.manage.ModelManager;
 
-import dream.first.extjs.controller.BaseExtJSController;
-import dream.first.extjs.login.LoginValidate;
-import dream.first.extjs.support.msg.JsonMsg;
+import dream.first.extjs.base.controller.DFBaseExtJSController;
+import dream.first.extjs.base.login.DFLoginValidate;
+import dream.first.extjs.base.msg.DFEJsonMsg;
 
 /**
  * 清空所有的缓存
@@ -24,8 +24,8 @@ import dream.first.extjs.support.msg.JsonMsg;
  * @since 2.0
  */
 @Controller
-@LoginValidate(validate = false)
-public class ClearAllCacheController extends BaseExtJSController {
+@DFLoginValidate(validate = false)
+public class ClearAllCacheController extends DFBaseExtJSController {
 
 	@Resource
 	private List<CacheManagerFactory> cacheManagerFactorys;
@@ -39,7 +39,7 @@ public class ClearAllCacheController extends BaseExtJSController {
 		}
 		ModelManager modelManager = modelService.getModelConfiguration().getModelManager();
 		modelManager.clearCacheModelAndTable();
-		return toJson(new JsonMsg(true, "所有缓存已经清除"));
+		return toJson(new DFEJsonMsg(true, "所有缓存已经清除"));
 	}
 
 }
